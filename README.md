@@ -1,6 +1,4 @@
-# Simulador de Comisiones - MERN Stack
-
-![Simulador de Comisiones](https://via.placeholder.com/1200x400?text=Simulador+de+Comisiones)
+# Simulador de Comisiones - MERN Stack - Ing. Francisco Herrera
 
 ## 📋 Descripción
 
