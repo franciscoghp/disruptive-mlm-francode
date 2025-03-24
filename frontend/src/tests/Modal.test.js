@@ -68,8 +68,8 @@ describe("Modal Component", () => {
       </Modal>,
     )
 
-    // Hacer clic en el overlay (modal-overlay)
-    fireEvent.click(screen.getByClassName("modal-overlay"))
+    // Hacer clic en el overlay usando el data-testid
+    fireEvent.click(screen.getByTestId("modal-overlay"))
 
     // Verificar que se llamó a onClose
     expect(mockOnClose).toHaveBeenCalledTimes(1)

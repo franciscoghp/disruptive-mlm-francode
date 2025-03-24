@@ -7,14 +7,14 @@ import Navbar from "../components/Navbar"
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   Link: ({ children, to, className }) => (
-    <a href={to} className={className} data-testid={`link-${to}`}>
+    <a href={to} className={className} data-testid={`link-${to}-${className?.replace(/\s+/g, "-") || "default"}`}>
       {children}
     </a>
   ),
 }))
 
 // Mock para el componente HelpPage
-jest.mock("../HelpPage", () => () => <div>Help Page Content</div>)
+jest.mock("../components/HelpPage", () => () => <div>Help Page Content</div>)
 
 describe("Navbar Component", () => {
   beforeEach(() => {
@@ -43,8 +43,12 @@ describe("Navbar Component", () => {
     expect(screen.getByText("Ayuda")).toBeInTheDocument()
 
     // Verificar que los enlaces tengan las URLs correctas
-    expect(screen.getByTestId("link-/")).toHaveAttribute("href", "/")
-    expect(screen.getByTestId("link-/ayuda")).toHaveAttribute("href", "/ayuda")
+    // Usamos getAllByTestId y verificamos el primero que corresponde al logo
+    expect(screen.getByTestId("link-/-navbar-logo")).toHaveAttribute("href", "/")
+    // Verificamos el enlace de Inicio
+    expect(screen.getByTestId("link-/-navbar-link")).toHaveAttribute("href", "/")
+    // Verificamos el enlace de Ayuda
+    expect(screen.getByTestId("link-/ayuda-navbar-link")).toHaveAttribute("href", "/ayuda")
   })
 
   test("aplica la clase navbar-scrolled cuando se hace scroll", () => {

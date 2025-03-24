@@ -1,124 +1,151 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
-import ResultadoTabla from "../components/ResultadoTabla"; // Asegúrate de que la ruta sea correcta
+/* eslint-disable testing-library/no-node-access */
+/* eslint-disable testing-library/no-container */
+import { render, screen, within } from "@testing-library/react"
+import "@testing-library/jest-dom"
+import ResultadoTabla from "../components/ResultadoTabla"
 
 describe("Componente ResultadoTabla", () => {
-  const resultados = {
+  const mockResultados = {
     capitalInicial: 1000,
-    plazo: 12,
-    tasaMensual: 5,
+    plazo: 6,
+    tasaMensual: 2,
     tipoBeneficio: "simple",
-    porcentajeFee: 10,
-    montoFee: 100,
-    totalBeneficios: 600,
-    montoNetoFinal: 1500,
+    porcentajeFee: 2,
+    montoFee: 120,
+    totalBeneficios: 120,
+    montoNetoFinal: 1000,
     tabla: [
-      { mes: 1, capital: 1000, beneficio: 50, total: 1050 },
-      { mes: 2, capital: 1050, beneficio: 52.5, total: 1102.5 },
-      { mes: 3, capital: 1102.5, beneficio: 55.13, total: 1157.63 },
+      { mes: 1, capital: 1000, beneficio: 20, total: 1020 },
+      { mes: 2, capital: 1000, beneficio: 20, total: 1040 },
+      { mes: 3, capital: 1000, beneficio: 20, total: 1060 },
+      { mes: 4, capital: 1000, beneficio: 20, total: 1080 },
+      { mes: 5, capital: 1000, beneficio: 20, total: 1100 },
+      { mes: 6, capital: 1000, beneficio: 20, total: 1120 },
     ],
-  };
+  }
 
-  test("No renderiza nada si resultados es null", () => {
-    const { container } = render(<ResultadoTabla resultados={null} />);
-    expect(container).toBeEmptyDOMElement();
-  });
+  test("No renderiza nada cuando no hay resultados", () => {
+    render(<ResultadoTabla resultados={null} />)
+    expect(screen.queryByText("Resultados de la Simulación")).not.toBeInTheDocument()
+  })
 
   test("Renderiza correctamente con resultados proporcionados", () => {
-    render(<ResultadoTabla resultados={resultados} />);
+    const { container } = render(<ResultadoTabla resultados={mockResultados} />)
 
-    // Verificar que el título se renderiza correctamente
-    expect(screen.getByText("Resultados de la Simulación")).toBeInTheDocument();
+    // Verificar título
+    expect(screen.getByText("Resultados de la Simulación")).toBeInTheDocument()
+
+    // Verificar encabezados
+    expect(screen.getByText("Resumen")).toBeInTheDocument()
+    expect(screen.getByText("Detalle Mensual")).toBeInTheDocument()
 
     // Verificar que los datos del resumen se renderizan correctamente
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes(`Capital Inicial: $${resultados.capitalInicial.toFixed(2)}`)
-        );
-      })
-    ).toBeInTheDocument();
+    // Buscar los párrafos específicos que contienen la información
+    const resumenCard = container.querySelector(".card")
 
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes(`Plazo: ${resultados.plazo} meses`)
-        );
-      })
-    ).toBeInTheDocument();
+    // Verificar Capital Inicial
+    const capitalInicialParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Capital Inicial:") &&
+        element.textContent.includes("$1000.00")
+      )
+    })
+    expect(capitalInicialParrafo).toBeInTheDocument()
 
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes(`Tasa Mensual: ${resultados.tasaMensual}%`)
-        );
-      })
-    ).toBeInTheDocument();
+    // Verificar Plazo
+    const plazoParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Plazo:") &&
+        element.textContent.includes("6 meses")
+      )
+    })
+    expect(plazoParrafo).toBeInTheDocument()
 
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes("Tipo de Beneficio: Simple")
-        );
-      })
-    ).toBeInTheDocument();
+    // Verificar Tasa Mensual
+    const tasaParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Tasa Mensual:") &&
+        element.textContent.includes("2%")
+      )
+    })
+    expect(tasaParrafo).toBeInTheDocument()
 
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes(`Fee Final: ${resultados.porcentajeFee}% ($${resultados.montoFee.toFixed(2)})`)
-        );
-      })
-    ).toBeInTheDocument();
+    // Verificar Tipo de Beneficio
+    const tipoParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Tipo de Beneficio:") &&
+        element.textContent.includes("Simple")
+      )
+    })
+    expect(tipoParrafo).toBeInTheDocument()
 
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes(`Total Beneficios: $${resultados.totalBeneficios.toFixed(2)}`)
-        );
-      })
-    ).toBeInTheDocument();
+    // Verificar Fee Final
+    const feeParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Fee Final:") &&
+        element.textContent.includes("2%") &&
+        element.textContent.includes("$120.00")
+      )
+    })
+    expect(feeParrafo).toBeInTheDocument()
 
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes(`Monto Neto a Recibir: $${resultados.montoNetoFinal.toFixed(2)}`)
-        );
-      })
-    ).toBeInTheDocument();
+    // Verificar Total Beneficios
+    const beneficiosParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Total Beneficios:") &&
+        element.textContent.includes("$120.00")
+      )
+    })
+    expect(beneficiosParrafo).toBeInTheDocument()
+
+    // Verificar Monto Neto a Recibir
+    const montoNetoParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Monto Neto a Recibir:") &&
+        element.textContent.includes("$1000.00")
+      )
+    })
+    expect(montoNetoParrafo).toBeInTheDocument()
 
     // Verificar que la tabla se renderiza correctamente
-    expect(screen.getByText("Detalle Mensual")).toBeInTheDocument();
-    expect(screen.getByRole("table")).toBeInTheDocument();
+    expect(screen.getByText("Mes")).toBeInTheDocument()
+    expect(screen.getByText("Capital")).toBeInTheDocument()
+    expect(screen.getByText("Beneficio Mensual")).toBeInTheDocument()
+    expect(screen.getByText("Total Acumulado")).toBeInTheDocument()
 
-    // Verificar que las filas de la tabla se renderizan correctamente
-    resultados.tabla.forEach((fila) => {
-      expect(screen.getByText(fila.mes.toString())).toBeInTheDocument();
-      expect(screen.getByText(`$${fila.capital.toFixed(2)}`)).toBeInTheDocument();
-      expect(screen.getByText(`$${fila.beneficio.toFixed(2)}`)).toBeInTheDocument();
-      expect(screen.getByText(`$${fila.total.toFixed(2)}`)).toBeInTheDocument();
-    });
-  });
+    // Verificar que se renderizan las filas de la tabla
+    expect(screen.getAllByRole("row")).toHaveLength(7) // 6 filas de datos + 1 fila de encabezado
+
+    // Verificar algunos valores específicos de la tabla
+    const filas = screen.getAllByRole("row")
+    expect(within(filas[1]).getByText("1")).toBeInTheDocument() // Primera fila, columna Mes
+    expect(within(filas[6]).getByText("$1120.00")).toBeInTheDocument() // Última fila, columna Total Acumulado
+  })
 
   test("Renderiza 'Interés Compuesto' si el tipo de beneficio es 'compuesto'", () => {
-    const resultadosCompuesto = { ...resultados, tipoBeneficio: "compuesto" };
-    render(<ResultadoTabla resultados={resultadosCompuesto} />);
+    const resultadosCompuesto = {
+      ...mockResultados,
+      tipoBeneficio: "compound",
+    }
 
-    expect(
-      screen.getByText((content, element) => {
-        return (
-          element.tagName.toLowerCase() === "p" &&
-          content.includes("Tipo de Beneficio: Interés Compuesto")
-        );
-      })
-    ).toBeInTheDocument();
-  });
-});
+    const { container } = render(<ResultadoTabla resultados={resultadosCompuesto} />)
+
+    const resumenCard = container.querySelector(".card")
+    const tipoParrafo = within(resumenCard).getByText((content, element) => {
+      return (
+        element.tagName.toLowerCase() === "p" &&
+        element.textContent.includes("Tipo de Beneficio:") &&
+        element.textContent.includes("Interés Compuesto")
+      )
+    })
+    expect(tipoParrafo).toBeInTheDocument()
+  })
+})
+

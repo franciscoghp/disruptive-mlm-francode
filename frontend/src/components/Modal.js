@@ -1,4 +1,3 @@
-
 import { useEffect } from "react"
 
 const Modal = ({ title, children, onClose }) => {
@@ -13,7 +12,7 @@ const Modal = ({ title, children, onClose }) => {
   }, [])
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} data-testid="modal-overlay">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3 className="modal-title">{title}</h3>
