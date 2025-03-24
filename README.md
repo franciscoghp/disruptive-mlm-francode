@@ -55,7 +55,8 @@ npm install
 # Ejemplo:
 # PORT=5000
 # MONGO_URI=mongodb://localhost:27017/simulador-comisiones
-# API_CLIENT_KEY=your_api_key
+# API_KEY=o0z8y85rjdx28iqef32f4mrl6e56b71742437588342
+# NODE_ENV=development
 
 # Iniciar el servidor
 npm start
