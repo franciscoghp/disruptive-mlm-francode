@@ -1,4 +1,5 @@
-# Simulador de Comisiones - MERN Stack - Ing. Francisco Herrera
+# Simulador de Comisiones - MERN Stack
+## Ing. Francisco Herrera
 
 ## 📋 Descripción
 
@@ -129,12 +130,8 @@ disruptive-mlm-francode/
 5. Abre un Pull Request
 
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-
 ## 📞 Contacto
 
-Francisco Hernández - [@franciscoghp](https://github.com/franciscoghp) - [francisco@example.com](mailto:francisco@example.com)
+Francisco Herrera - [@franciscoghp](https://github.com/franciscoghp) - [francisco9mil@gmail.com](mailto:francisco9mil@gmail.com)
 
 Link del proyecto: [https://github.com/franciscoghp/disruptive-mlm-francode](https://github.com/franciscoghp/disruptive-mlm-francode)
