@@ -1,13 +1,14 @@
-
+"use client"
 import { useState } from "react"
 import axios from "axios"
 import { CSVLink } from "react-csv"
 import QRCode from "qrcode.react"
 import ResultadoTabla from "./ResultadoTabla"
 import Modal from "./Modal"
+import Toast from "./Toast"
 
 // Cambia esta línea para apuntar a tu backend en producción
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api"
+const API_URL = "http://localhost:5000/api"
 
 const Simulador = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ const Simulador = () => {
   })
 
   const [resultados, setResultados] = useState(null)
-  const [error, setError] = useState("")
+  const [toasts, setToasts] = useState([])
   const [showQR, setShowQR] = useState(false)
   const [paymentData, setPaymentData] = useState(null)
   const [showPaymentStatus, setShowPaymentStatus] = useState(false)
@@ -32,15 +33,23 @@ const Simulador = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  const addToast = (message, type = "error") => {
+    const id = Date.now()
+    setToasts((prev) => [...prev, { id, message, type }])
+  }
+
+  const removeToast = (id) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id))
+  }
+
   const simularInversion = async (e) => {
     e.preventDefault()
 
     if (!capital || isNaN(capital) || Number.parseFloat(capital) <= 0) {
-      setError("Por favor ingrese un monto válido")
+      addToast("Por favor ingrese un monto válido")
       return
     }
 
-    setError("")
     setLoading(true)
 
     try {
@@ -53,7 +62,7 @@ const Simulador = () => {
       setResultados(res.data)
       setLoading(false)
     } catch (err) {
-      setError("Error al simular la inversión")
+      addToast("Error al simular la inversión")
       setLoading(false)
       console.error(err)
     }
@@ -61,7 +70,7 @@ const Simulador = () => {
 
   const crearPago = async () => {
     if (!resultados) {
-      setError("Debe simular primero")
+      addToast("Debe simular primero")
       return
     }
 
@@ -76,8 +85,7 @@ const Simulador = () => {
       setShowQR(true)
       setLoadingDeposit(false)
     } catch (err) {
-      console.log({err})
-      setError("Error al crear el pago")
+      addToast("Error al crear el pago")
       setLoadingDeposit(false)
       console.error(err)
     }
@@ -85,7 +93,7 @@ const Simulador = () => {
 
   const verificarPago = async () => {
     if (!paymentData) {
-      setError("Debe crear un pago primero")
+      addToast("Debe crear un pago primero")
       return
     }
 
@@ -93,12 +101,12 @@ const Simulador = () => {
 
     try {
       const res = await axios.get(`${API_URL}/verificar-pago/${paymentData.address}`)
-      console.log({res})
+
       setPaymentStatus(res.data.data)
       setShowPaymentStatus(true)
       setLoadingVerify(false)
     } catch (err) {
-      setError("Error al verificar el pago")
+      addToast("Error al verificar el pago")
       setLoadingVerify(false)
       console.error(err)
     }
@@ -115,7 +123,6 @@ const Simulador = () => {
     setPaymentData(null)
     setShowPaymentStatus(false)
     setPaymentStatus(null)
-    setError("")
   }
 
   const getCSVData = () => {
@@ -146,8 +153,6 @@ const Simulador = () => {
   return (
     <div className="container">
       <h2>Simulador de Comisiones</h2>
-
-      {error && <div className="alert alert-danger">{error}</div>}
 
       <form onSubmit={simularInversion}>
         <div className="form-group">
@@ -283,6 +288,11 @@ const Simulador = () => {
           </div>
         </Modal>
       )}
+      <div className="toast-container">
+        {toasts.map((toast) => (
+          <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => removeToast(toast.id)} />
+        ))}
+      </div>
     </div>
   )
 }

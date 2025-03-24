@@ -1,13 +1,12 @@
-const express = require("express")
-const cors = require("cors")
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
-const simuladorRoutes = require("./routes/simulador")
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
 
 // Cargar variables de entorno
-dotenv.config()
+require("dotenv").config();
 
-const app = express()
+const simuladorRoutes = require("./routes/simulador");
+const app = express();
 
 // Configuración de CORS más específica
 const corsOptions = {
