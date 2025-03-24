@@ -85,6 +85,11 @@ npm test
 
 # Para ejecutar pruebas específicas
 npm test -- -t "Componente ResultadoTabla"
+
+# Para ejecutar las pruebas del backend
+cd backend
+npm test
+
 ```
 
 ## 📱 Capturas de pantalla
